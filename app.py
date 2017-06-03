@@ -45,10 +45,12 @@ if __name__ == '__main__':
     try:
         load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
         docker_compose_output = DockerComposeOutput()
+        print('Starting Docker Compose Log @ {}...'.format(os.environ.get('EXUP_DIR')))
         docker_compose_log = DockerComposeLog(
             docker_compose_output,
             os.environ.get('EXUP_DIR')
         )
+        print('Docker Compose Log started.')
         docker_compose_log.start()
         # Start HTTP/WebSocket server
         server = pywsgi.WSGIServer(('', port), app, handler_class=WebSocketHandler)

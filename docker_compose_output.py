@@ -8,6 +8,7 @@ class DockerComposeOutput(object):
 		self.newLogs = []
 		
 	def write(self, text):
+		print('Log: {}'.format(text))
 		self.allLogs.append(text)
 		self.newLogs.append(text)
 		
