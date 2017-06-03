@@ -1,4 +1,4 @@
-FROM docker:latest
+FROM alpine:latest
 
 RUN apk update
 RUN apk add bash
@@ -18,6 +18,21 @@ ADD templates /app/templates
 
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install virtualenv
+RUN virtualenv -p python3 venv3
+RUN source venv3/bin/activate
+RUN venv3/bin/pip3 install -r requirements.txt
 
-CMD ["python3","app.py"]
+FROM docker:latest
+
+RUN apk update
+RUN apk add bash
+RUN apk add python3
+
+COPY --from=0 /app /app
+
+ADD startup.sh /app/startup.sh
+
+WORKDIR /app
+
+CMD ["./startup.sh"]
