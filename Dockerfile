@@ -2,10 +2,10 @@ FROM alpine:latest
 
 RUN apk update
 RUN apk add bash
-RUN apk add python3-dev
+RUN apk add python-dev
 RUN apk add build-base
-RUN python3 -m ensurepip
-RUN pip3 install --upgrade pip
+RUN python -m ensurepip
+RUN pip install --upgrade pip
 
 RUN mkdir /app
 
@@ -18,16 +18,16 @@ ADD templates /app/templates
 
 WORKDIR /app
 
-RUN pip3 install virtualenv
-RUN virtualenv -p python3 venv3
-RUN source venv3/bin/activate
-RUN venv3/bin/pip3 install -r requirements.txt
+RUN pip install virtualenv
+RUN virtualenv -p python venv
+RUN source venv/bin/activate
+RUN venv/bin/pip install -r requirements.txt
 
 FROM docker:latest
 
 RUN apk update
 RUN apk add bash
-RUN apk add python3
+RUN apk add python
 
 COPY --from=0 /app /app
 
