@@ -16,15 +16,23 @@ class DockerComposeOutput(object):
 		self.flushNewLogs()
 
 	def flushAllLogs(self):
-		if self.ws is not None:
-			for log in self.allLogs:
-				self.ws.send(json.dumps({'type': 'log', 'log': log}))
+		try:
+			if self.ws is not None:
+				for log in self.allLogs:
+					self.ws.send(json.dumps({'type': 'log', 'log': log, 'all': True}))
+		except:
+			print('Error flushing all logs.')
+			self.ws = None
 
 	def flushNewLogs(self):
-		if self.ws is not None:
-			for log in self.newLogs:
-				self.ws.send(json.dumps({'type': 'log', 'log': log}))
-			self.newLogs = []
+		try:
+			if self.ws is not None:
+				for log in self.newLogs:
+					self.ws.send(json.dumps({'type': 'log', 'log': log}))
+				self.newLogs = []	
+		except err:
+			print('Error flushing new logs.')
+			self.ws = None
 
 	def process_ws_connect(self, ws):
 		self.ws = ws

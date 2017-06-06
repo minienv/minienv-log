@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, send_from_directory
+from flask_cors import CORS
 from flask_sockets import Sockets
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
@@ -21,6 +22,7 @@ class CustomFlask(Flask):
 
 # global vars
 app = CustomFlask(__name__)
+CORS(app)
 sockets = Sockets(app)
 port = int(os.getenv('PORT', 8080))
 docker_compose_output = None

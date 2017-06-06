@@ -9,6 +9,9 @@ var app = new Vue({
     },
     methods: {
         addLog(log) {
+            if (log.all) {
+                app.logs = [];
+            }
             app.logs.push(log);
             setTimeout(function() {
                 app.scrollMessagesToBottom()
