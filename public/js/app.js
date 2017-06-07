@@ -45,10 +45,10 @@ var app = new Vue({
                     app.webSocketConnected = true;
                     var data = JSON.parse(evt.data);
                     if (data.type == 'log') {
-                        console.log('Received log: ' + data.log);
                         app.addLog({
                             ts: new Date(),
-                            log: data.log
+                            log: data.log,
+                            all: data.log.all
                         });
                     }
                     else if (data.type == 'ping') {
