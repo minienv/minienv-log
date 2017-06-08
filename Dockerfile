@@ -1,37 +1,33 @@
 FROM alpine:latest
 
-RUN apk update
-RUN apk add bash
-RUN apk add python-dev
-RUN apk add build-base
-RUN python -m ensurepip
-RUN pip install --upgrade pip
-
 RUN mkdir /app
 
-ADD app.py /app/app.py
-ADD docker_compose_log.py /app/docker_compose_log.py 
-ADD docker_compose_output.py /app/docker_compose_output.py
-ADD public /app/public
-ADD requirements.txt /app/requirements.txt
-ADD templates /app/templates
+COPY app.py \
+     docker_compose_log.py \
+     docker_compose_output.py \
+     requirements.txt \
+     startup.sh /app/
+COPY public /app/public
+COPY templates /app/templates
 
 WORKDIR /app
 
-RUN pip install virtualenv
-RUN virtualenv -p python venv
-RUN source venv/bin/activate
-RUN venv/bin/pip install -r requirements.txt
+RUN apk add --no-cache bash \
+    python-dev \
+    build-base \
+  && python -m ensurepip \
+  && pip install --upgrade pip \
+  && pip install virtualenv \
+  && virtualenv -p python venv \
+  && source venv/bin/activate \
+  && venv/bin/pip install -r requirements.txt
 
 FROM docker:latest
 
-RUN apk update
-RUN apk add bash
-RUN apk add python
+RUN apk add --no-cache bash \
+    python
 
 COPY --from=0 /app /app
-
-ADD startup.sh /app/startup.sh
 
 WORKDIR /app
 
