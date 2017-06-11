@@ -35,7 +35,7 @@ var app = new Vue({
         },
         connect() {
             if ("WebSocket" in window) {
-                let webSocketUrl = app.webSocketProtocol + window.location.host;
+                var webSocketUrl = app.webSocketProtocol + window.location.host;
                 app.webSocket = new WebSocket(webSocketUrl);
                 app.webSocket.onopen = function() {
                     console.log('Web socket connected.');

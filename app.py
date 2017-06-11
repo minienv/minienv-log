@@ -28,6 +28,15 @@ port = int(os.getenv('PORT', 8080))
 docker_compose_output = None
 web_socket_protocol = 'ws://'
 
+@app.after_request
+def add_header(r):
+    # disable caching
+    # after multiple runs kubernetes can expose the same port that was expose
+    # for a different web app (like  that have the same assets
+    r.headers["Cache-Control"] = "no-store, must-revalidate"
+    r.headers["Expires"] = "0"
+    return r
+
 @app.route('/<path:path>')
 def send_file(path):
     return send_from_directory('public', path)
