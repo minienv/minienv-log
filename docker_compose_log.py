@@ -6,15 +6,18 @@ from compose.cli.log_printer import LogPrinter
 from compose.config.environment import Environment
 
 class DockerComposeLog(threading.Thread):
-	
+
 	def __init__(self, docker_compose_output, docker_compose_path) :
 		threading.Thread.__init__(self)
 		self.docker_compose_output = docker_compose_output
 		self.docker_compose_path = docker_compose_path
 
-	def run(self): 
+	def run(self):
 		p = self.get_project(self.docker_compose_path)
 		containers = p.containers(stopped=True)
+		while len(containers) == 0:
+			time.sleep(5)
+			containers = p.containers(stopped=True)
 		log_args = {
     		'follow': True,
     		'timestamps': True

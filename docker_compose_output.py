@@ -6,12 +6,12 @@ class DockerComposeOutput(object):
 		self.ws = None
 		self.allLogs = []
 		self.newLogs = []
-		
+
 	def write(self, text):
 		print('Log: {}'.format(text))
 		self.allLogs.append(text)
 		self.newLogs.append(text)
-		
+
 	def flush(self):
 		self.flushNewLogs()
 
@@ -29,7 +29,7 @@ class DockerComposeOutput(object):
 			if self.ws is not None:
 				for log in self.newLogs:
 					self.ws.send(json.dumps({'type': 'log', 'log': log}))
-				self.newLogs = []	
+				self.newLogs = []
 		except err:
 			print('Error flushing new logs.')
 			self.ws = None
