@@ -1,4 +1,5 @@
 import threading
+import time
 from compose.container import Container
 from compose.cli.command import get_project as compose_get_project, get_config_path_from_options
 from compose.cli.log_printer import build_log_presenters
