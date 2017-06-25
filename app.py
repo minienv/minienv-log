@@ -21,8 +21,9 @@ class CustomFlask(Flask):
 )
 
 # global vars
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 app = CustomFlask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": os.environ.get('EXUP_ALLOW_ORIGIN')}})
 sockets = Sockets(app)
 port = int(os.getenv('PORT', 8080))
 docker_compose_output = None
@@ -54,7 +55,6 @@ def process_websocket_message(ws):
 
 if __name__ == '__main__':
     try:
-        load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
         docker_compose_output = DockerComposeOutput()
         print('Starting Docker Compose Log @ {}...'.format(os.environ.get('EXUP_DIR')))
         docker_compose_log = DockerComposeLog(
