@@ -2,13 +2,7 @@ FROM alpine:latest
 
 RUN mkdir /app
 
-COPY app.py \
-     docker_compose_log.py \
-     docker_compose_output.py \
-     requirements.txt \
-     startup.sh /app/
-COPY public /app/public
-COPY templates /app/templates
+COPY requirements.txt /app/
 
 WORKDIR /app
 
@@ -21,6 +15,13 @@ RUN apk add --no-cache bash \
   && virtualenv -p python venv \
   && source venv/bin/activate \
   && venv/bin/pip install -r requirements.txt
+
+COPY app.py \
+     docker_compose_log.py \
+     docker_compose_output.py \
+     startup.sh /app/
+COPY public /app/public
+COPY templates /app/templates
 
 FROM docker:latest
 

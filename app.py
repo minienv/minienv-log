@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, send_from_directory
-from flask_cors import CORS
 from flask_sockets import Sockets
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
@@ -21,21 +20,20 @@ class CustomFlask(Flask):
 )
 
 # global vars
-load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 app = CustomFlask(__name__)
-CORS(app, resources={r"/*": {"origins": os.environ.get('EXUP_ALLOW_ORIGIN')}})
 sockets = Sockets(app)
-port = int(os.getenv('PORT', 8080))
 docker_compose_output = None
 web_socket_protocol = 'ws://'
 
 @app.after_request
 def add_header(r):
     # disable caching
-    # after multiple runs kubernetes can expose the same port that was expose
-    # for a different web app (like  that have the same assets
-    r.headers["Cache-Control"] = "no-store, must-revalidate"
-    r.headers["Expires"] = "0"
+    # after multiple runs kubernetes or docker swarm can expose the same port that was exposed
+    # for a different web app. if both apps have the same file names the browser could use an old/cached version
+    r.headers['Access-Control-Allow-Origin'] = os.environ.get('EXUP_ALLOW_ORIGIN')
+    r.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    r.headers['Cache-Control'] = 'no-store, must-revalidate'
+    r.headers['Expires'] = '0'
     return r
 
 @app.route('/<path:path>')
@@ -55,6 +53,7 @@ def process_websocket_message(ws):
 
 if __name__ == '__main__':
     try:
+        load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
         docker_compose_output = DockerComposeOutput()
         print('Starting Docker Compose Log @ {}...'.format(os.environ.get('EXUP_DIR')))
         docker_compose_log = DockerComposeLog(
@@ -64,6 +63,7 @@ if __name__ == '__main__':
         print('Docker Compose Log started.')
         docker_compose_log.start()
         # Start HTTP/WebSocket server
+        port = int(os.getenv('PORT', 8080))
         server = pywsgi.WSGIServer(('', port), app, handler_class=WebSocketHandler)
         server.serve_forever()
     except (KeyboardInterrupt, SystemExit):
