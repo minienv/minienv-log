@@ -30,7 +30,7 @@ def add_header(r):
     # disable caching
     # after multiple runs kubernetes or docker swarm can expose the same port that was exposed
     # for a different web app. if both apps have the same file names the browser could use an old/cached version
-    r.headers['Access-Control-Allow-Origin'] = os.environ.get('EXUP_ALLOW_ORIGIN')
+    r.headers['Access-Control-Allow-Origin'] = os.environ.get('MINIENV_ALLOW_ORIGIN')
     r.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     r.headers['Cache-Control'] = 'no-store, must-revalidate'
     r.headers['Expires'] = '0'
@@ -55,10 +55,10 @@ if __name__ == '__main__':
     try:
         load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
         docker_compose_output = DockerComposeOutput()
-        print('Starting Docker Compose Log @ {}...'.format(os.environ.get('EXUP_DIR')))
+        print('Starting Docker Compose Log @ {}...'.format(os.environ.get('MINIENV_DIR')))
         docker_compose_log = DockerComposeLog(
             docker_compose_output,
-            os.environ.get('EXUP_DIR')
+            os.environ.get('MINIENV_DIR')
         )
         print('Docker Compose Log started.')
         docker_compose_log.start()
