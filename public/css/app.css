@@ -11,5 +11,9 @@ html, body {
 #log-container {
     height: 100%;
     overflow: scroll;
+}
+
+pre {
+	font-family: 'Roboto Mono', monospace;
 	font-size: 10pt;
 }
