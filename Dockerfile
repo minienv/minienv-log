@@ -25,6 +25,8 @@ COPY templates /app/templates
 
 FROM docker:latest
 
+MAINTAINER Mark Watson <markwatsonatx@gmail.com>
+
 RUN apk add --no-cache bash \
     python
 
