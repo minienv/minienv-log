@@ -51,6 +51,4 @@ class DockerComposeOutput(object):
             return
         msg = json.loads(msg_str)
         if msg['type'] == 'ping':
-            for ws in self.web_sockets:
-                ws.send(json.dumps({'type': 'ping'}))
-        self.flush_new_logs()
+            ws.send(json.dumps({'type': 'ping'}))
