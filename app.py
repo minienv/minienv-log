@@ -1,11 +1,12 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 from flask_sockets import Sockets
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 from docker_compose_log import DockerComposeLog
 from docker_compose_output import DockerComposeOutput
+
 
 class CustomFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
@@ -19,11 +20,12 @@ class CustomFlask(Flask):
     )
 )
 
+
 # global vars
 app = CustomFlask(__name__)
 sockets = Sockets(app)
 docker_compose_output = None
-web_socket_protocol = 'ws://'
+
 
 @app.after_request
 def add_header(r):
@@ -36,13 +38,22 @@ def add_header(r):
     r.headers['Expires'] = '0'
     return r
 
+
 @app.route('/<path:path>')
 def send_file(path):
     return send_from_directory('public', path)
 
+
 @app.route('/')
 def index():
+    http_scheme = os.environ.get('MINIENV_NODE_HOST_PROTOCOL')
+    print('Serving request, http_scheme = {}'.format(http_scheme))
+    if http_scheme == 'http':
+        web_socket_protocol = 'ws://'
+    else:
+        web_socket_protocol = 'wss://'
     return render_template('index.html', web_socket_protocol=web_socket_protocol)
+
 
 @sockets.route('/')
 def process_websocket_message(ws):
@@ -50,6 +61,7 @@ def process_websocket_message(ws):
     while not ws.closed:
         message = ws.receive()
         docker_compose_output.process_ws_message(ws, message)
+
 
 if __name__ == '__main__':
     try:

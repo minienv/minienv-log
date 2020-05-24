@@ -1,7 +1,9 @@
 html, body {
 	padding: 0px;
 	margin: 0px;
+	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
 #app {
@@ -9,11 +11,7 @@ html, body {
 }
 
 #log-container {
-    height: 100%;
-    overflow: scroll;
-}
-
-pre {
-	font-family: 'Roboto Mono', monospace;
+    font-family: 'Roboto Mono', monospace;
 	font-size: 10pt;
+	height: 100%;
 }
